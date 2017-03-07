@@ -102,11 +102,18 @@ def _pyside2():
         QtCore,
         QtNetwork,
         QtXml,
-        QtHelp,
+        # Atomic Fiction Hack because QtHelp does not exists in Houdini 16
+        # QtHelp,
         QtUiTools,
         __version__
     )
-
+    
+    # Atomic Fiction Hack because QtHelp does not exists in Houdini 16
+    try:
+        from PySide2 import QtHelp
+    except:
+        QtHelp = None
+    
     Qt.__binding__ = "PySide2"
     Qt.__qt_version__ = QtCore.qVersion()
     Qt.__binding_version__ = __version__
@@ -918,7 +925,9 @@ for module, members in _strict_members.items():
     for member in members:
         orig = getattr(sys.modules[__name__], "_%s" % module)
         repl = getattr(sys.modules[__name__], module)
-        setattr(repl, member, getattr(orig, member))
+        # Atomic Fiction Hack because QtHelp does not exists in Houdini 16
+        if orig:
+            setattr(repl, member, getattr(orig, member))
 
 
 # Enable direct import of submodules
