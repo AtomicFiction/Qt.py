@@ -188,8 +188,11 @@ def _pyqt4():
         # PyQt4 < v4.6
     except ValueError as e:
         # API version already set to v1
-        raise ImportError(str(e))
-
+        # raise ImportError(str(e))
+        
+        # Atomic Fiction Hack because Katana already sets api to v1
+        pass
+    
     from PyQt4 import (
         QtGui,
         QtCore,
