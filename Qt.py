@@ -184,8 +184,12 @@ def _pyqt4():
         sip.setapi("QTime", 2)
         sip.setapi("QUrl", 2)
     except AttributeError as e:
-        raise ImportError(str(e))
         # PyQt4 < v4.6
+        # raise ImportError(str(e))
+        
+        # Atomic Fiction Hack because Katana already sets api to v1
+        pass
+            
     except ValueError as e:
         # API version already set to v1
         # raise ImportError(str(e))
@@ -930,8 +934,10 @@ for module, members in _strict_members.items():
         repl = getattr(sys.modules[__name__], module)
         # Atomic Fiction Hack because QtHelp does not exists in Houdini 16
         if orig:
-            setattr(repl, member, getattr(orig, member))
-
+            try:
+                setattr(repl, member, getattr(orig, member))
+            except AttributeError:
+                pass
 
 # Enable direct import of submodules
 # E.g. import Qt.QtCore
