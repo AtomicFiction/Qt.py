@@ -107,13 +107,13 @@ def _pyside2():
         QtUiTools,
         __version__
     )
-    
+
     # Atomic Fiction Hack because QtHelp does not exists in Houdini 16
     try:
         from PySide2 import QtHelp
     except:
         QtHelp = None
-    
+
     Qt.__binding__ = "PySide2"
     Qt.__qt_version__ = QtCore.qVersion()
     Qt.__binding_version__ = __version__
@@ -131,16 +131,25 @@ def _pyside():
         QtNetwork,
         QtXml,
         QtHelp,
-        QtUiTools,
         __version__
     )
+
+    # << Atomic Fiction Hack - Nuke pre 10.0v5 doesn't include the QtUiTools module.
+    try:
+        from PySide import QtUiTools
+    except:
+        QtUiTools = None
+    # >>
 
     QtWidgets = QtGui
 
     Qt.__binding__ = "PySide"
     Qt.__qt_version__ = QtCore.qVersion()
     Qt.__binding_version__ = __version__
-    QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
+    # << Atomic Fiction Hack - Nuke pre 10.0v5 doesn't include the QtUiTools module.
+    if QtUiTools:
+        QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
+    # >>
     QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
     QtCompat.translate = (
         lambda context, sourceText, disambiguation, n:
@@ -186,17 +195,17 @@ def _pyqt4():
     except AttributeError as e:
         # PyQt4 < v4.6
         # raise ImportError(str(e))
-        
+
         # Atomic Fiction Hack because Katana already sets api to v1
         pass
-            
+
     except ValueError as e:
         # API version already set to v1
         # raise ImportError(str(e))
-        
+
         # Atomic Fiction Hack because Katana already sets api to v1
         pass
-    
+
     from PyQt4 import (
         QtGui,
         QtCore,
