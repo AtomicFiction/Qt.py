@@ -218,7 +218,7 @@ def _pyqt4():
         # raise ImportError(str(e))
 
         # Atomic Fiction Hack because Katana already sets api to v1
-        passmap
+        pass
 
     from PyQt4 import (
         QtGui,
