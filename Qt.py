@@ -130,7 +130,8 @@ def _pyside():
         QtCore,
         QtNetwork,
         QtXml,
-        QtHelp,
+        # Atomic Fiction Hack because QtHelp does not exists in Mari        
+        # QtHelp,
         __version__
     )
 
@@ -140,6 +141,12 @@ def _pyside():
     except:
         QtUiTools = None
     # >>
+    
+    # Atomic Fiction Hack because QtHelp does not exists in Mari
+    try:
+        from PySide import QtHelp
+    except:
+        QtHelp = None
 
     QtWidgets = QtGui
 
@@ -168,9 +175,16 @@ def _pyqt5():
         QtCore,
         QtNetwork,
         QtXml,
-        QtHelp,
+        # Atomic Fiction Hack because QtHelp does not always exists in thirdparty apps        
+        # QtHelp,
         uic
     )
+
+  # Atomic Fiction Hack because QtHelp does not always exists in thirdparty apps
+    try:
+        from PyQt5 import QtHelp
+    except:
+        QtHelp = None
 
     Qt.__binding__ = "PyQt5"
     Qt.__qt_version__ = QtCore.QT_VERSION_STR
@@ -204,16 +218,23 @@ def _pyqt4():
         # raise ImportError(str(e))
 
         # Atomic Fiction Hack because Katana already sets api to v1
-        pass
+        passmap
 
     from PyQt4 import (
         QtGui,
         QtCore,
         QtNetwork,
         QtXml,
-        QtHelp,
+        # Atomic Fiction Hack because QtHelp does not always exists in thirdparty apps
+        # QtHelp,
         uic
     )
+
+    # Atomic Fiction Hack because QtHelp does not always exists in thirdparty apps
+    try:
+        from PyQt4 import QtHelp
+    except:
+        QtHelp = None
 
     QtWidgets = QtGui
 
@@ -941,8 +962,10 @@ for module, members in _strict_members.items():
     for member in members:
         orig = getattr(sys.modules[__name__], "_%s" % module)
         repl = getattr(sys.modules[__name__], module)
-        # Atomic Fiction Hack because QtHelp does not exists in Houdini 16
+        # Atomic Fiction Hack because some modules may be missing
         if orig:
+            
+            # Atomic Fiction Hack because some members may be missing
             try:
                 setattr(repl, member, getattr(orig, member))
             except AttributeError:
